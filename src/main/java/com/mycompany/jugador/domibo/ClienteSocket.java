@@ -18,8 +18,8 @@ import java.net.Socket;
  */
 public class ClienteSocket implements IEscuchadorDeEventosDelCliente {
     private Socket clienteSocket;
-    private BufferedReader entrada;
-    private PrintWriter salida;
+    private BufferedReader canalDeEntrada;
+    private PrintWriter canalDesalida;
     private int puertoDelServidor;
     private String ipDelServidor;
     private EscuchadorDeMensajes escuchadorDeMensajes;
@@ -33,9 +33,9 @@ public class ClienteSocket implements IEscuchadorDeEventosDelCliente {
     public void conectar(){
         try {
             clienteSocket = new Socket(ipDelServidor, puertoDelServidor);
-            entrada = new BufferedReader(new InputStreamReader(clienteSocket.getInputStream()));
-            salida = new PrintWriter(clienteSocket.getOutputStream(), true);
-            escuchadorDeMensajes=new EscuchadorDeMensajes(this, entrada);
+            canalDeEntrada = new BufferedReader(new InputStreamReader(clienteSocket.getInputStream()));
+            canalDesalida = new PrintWriter(clienteSocket.getOutputStream(), true);
+            escuchadorDeMensajes=new EscuchadorDeMensajes(this, canalDeEntrada);
             escuchadorDeMensajes.start();
             verificadorDeConexion=new VerificadorDeConexion(this);
             verificadorDeConexion.start();
@@ -57,7 +57,7 @@ public class ClienteSocket implements IEscuchadorDeEventosDelCliente {
     }
     
     public void enviarMensajeAlServidor(String mensaje){
-        salida.println(mensaje);
+        canalDesalida.println(mensaje);
     }
     
     public void asignarObservador(IObservadorDeClienteSocket observador) {
@@ -70,6 +70,10 @@ public class ClienteSocket implements IEscuchadorDeEventosDelCliente {
     
     public String obtenerIpDelServidor(){
         return clienteSocket.getInetAddress().getHostAddress();
+    }
+    
+    public BufferedReader obtenerCanalEntrada(){
+        return canalDeEntrada;
     }
 
     @Override
