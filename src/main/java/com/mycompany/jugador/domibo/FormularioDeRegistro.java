@@ -5,12 +5,14 @@
  */
 package com.mycompany.jugador.domibo;
 
+import com.mycompany.utilities.Paquete;
+import org.json.JSONObject;
 /**
  *
  * @author Pc
  */
 public class FormularioDeRegistro extends javax.swing.JFrame {
-
+    private Controlador controlador;
     /**
      * Creates new form FormularioDeRegistro
      */
@@ -62,7 +64,7 @@ public class FormularioDeRegistro extends javax.swing.JFrame {
 
         jTextField2.setToolTipText("Escriba su nombre de usuario en el juego...");
 
-        jLabel4.setText("Email");
+        jLabel4.setText("Correo electrónico");
 
         jTextField4.setToolTipText("Escriba su correo electrónico...");
 
@@ -79,6 +81,11 @@ public class FormularioDeRegistro extends javax.swing.JFrame {
         jTextField7.setToolTipText("Vuelva a escribir su contraseña");
 
         jButton1.setText("Registrarme");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setText("Cancelar");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
@@ -183,14 +190,12 @@ public class FormularioDeRegistro extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        FormularioDeInicio formularioDeInicio = new FormularioDeInicio();
-        formularioDeInicio.setVisible(true);
+        controlador.mostrarFormularioDeInicio();
         dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jLabel88MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel88MouseClicked
-        FormularioDeInicioDeSesion formularioDeInicioDeSesion = new FormularioDeInicioDeSesion();
-        formularioDeInicioDeSesion.setVisible(true);
+        controlador.mostrarFormularioDeInicioDeSesion();
         dispose();
     }//GEN-LAST:event_jLabel88MouseClicked
 
@@ -202,6 +207,34 @@ public class FormularioDeRegistro extends javax.swing.JFrame {
         jLabel88.setText("Login");
     }//GEN-LAST:event_jLabel88MouseExited
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        controlador.registrarJugador();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    public void asignarControlador(Controlador controlador){
+        this.controlador=controlador;
+    }
+    
+    public String obtenerDatoDelTextField1(){
+        return jTextField1.getText();
+    }
+    
+    public String obtenerDatoDelTextField2(){
+        return jTextField2.getText();
+    }
+    
+    public String obtenerDatoDelTextField4(){
+        return jTextField4.getText();
+    }
+    
+    public String obtenerDatoDelTextField5(){
+        return jTextField5.getText();
+    }
+    
+    public String obtenerDatoDelTextField6(){
+        return jTextField6.getText();
+    }
+    
     /**
      * @param args the command line arguments
      */

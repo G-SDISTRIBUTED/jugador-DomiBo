@@ -6,6 +6,7 @@
 package com.mycompany.jugador.domibo;
 
 import com.mycompany.utilities.Paquete;
+import org.json.JSONObject;
 
 /**
  *
@@ -13,16 +14,26 @@ import com.mycompany.utilities.Paquete;
  */
 public class Jugador implements IObservadorDeClienteSocket {
     ClienteSocket clienteSocket;
+    Controlador controlador;
     
     public Jugador(){
         clienteSocket=new ClienteSocket(12345,"127.0.0.1");
         clienteSocket.asignarObservador(this);
     }
     
+    public void asignarControlador(Controlador controlador){
+        this.controlador=controlador;
+    }
+    
+    public void enviarPaquete(String paqueteSerializado){
+        clienteSocket.enviarMensajeAlServidor(paqueteSerializado);
+    }
+    
     @Override
     public void paqueteRecibido(String mensaje) {
         Paquete paquete=Paquete.deserializar(mensaje);
         String protocolo = paquete.obtenerProtocolo();
+        String parametros=paquete.obtenerParametros();
         switch (protocolo) {
             case "LOGIN":
                 //
@@ -30,8 +41,13 @@ public class Jugador implements IObservadorDeClienteSocket {
             case "LOGOUT":
                 //
                 break;
-            case "REGISTER":
-                //
+            case "REGISTRO":
+                JSONObject parametrosJson = new JSONObject(parametros);
+                String estado = parametrosJson.getString("estado");
+                if(estado.equals("true")){
+                    controlador.cerrarFormularioDeRegistro();
+                    controlador.mostrarFormularioPrincipal();
+                }
                 break;
             default:
                 //
