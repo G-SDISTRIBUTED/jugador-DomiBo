@@ -27,6 +27,8 @@ public class ClienteSocket implements IEscuchadorDeEventosDelCliente {
     private IObservadorDeClienteSocket observador;
     
     public ClienteSocket(int puerto, String host){
+        this.puertoDelServidor=puerto;
+        this.ipDelServidor=host;
         conectar();
     }
     
