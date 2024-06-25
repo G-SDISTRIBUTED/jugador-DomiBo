@@ -36,15 +36,20 @@ public class Jugador implements IObservadorDeClienteSocket {
         String parametros=paquete.obtenerParametros();
         switch (protocolo) {
             case "LOGIN":
-                //
+                JSONObject parametrosDeVerificacionLogin = new JSONObject(parametros);
+                String estadoDeRespuestaLogin = parametrosDeVerificacionLogin.getString("estado");
+                if(estadoDeRespuestaLogin.equals("true")){
+                    controlador.cerrarFormularioDeInicioDeSesion();
+                    controlador.mostrarFormularioPrincipal();
+                }
                 break;
             case "LOGOUT":
                 //
                 break;
             case "REGISTRO":
-                JSONObject parametrosJson = new JSONObject(parametros);
-                String estado = parametrosJson.getString("estado");
-                if(estado.equals("true")){
+                JSONObject parametrosDeVerificacionRegistro = new JSONObject(parametros);
+                String estadoDeRespuestaDERegistro = parametrosDeVerificacionRegistro.getString("estado");
+                if(estadoDeRespuestaDERegistro.equals("true")){
                     controlador.cerrarFormularioDeRegistro();
                     controlador.mostrarFormularioPrincipal();
                 }

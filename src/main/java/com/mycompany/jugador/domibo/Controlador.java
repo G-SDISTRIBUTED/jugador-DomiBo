@@ -73,6 +73,17 @@ public class Controlador {
         jugador.enviarPaquete(paqueteSerializado);
     }
     
+    public void iniciarSesionDelJugador(){
+        JSONObject parametrosJson = new JSONObject();
+        parametrosJson.put("nombreDeUsuario", formularioDeInicioDeSesion.obtenerDatoDelTextField1());
+        parametrosJson.put("contrasena", formularioDeInicioDeSesion.obtenerDatoDelTextField2());
+        String parametrosString=parametrosJson.toString();
+        String protocolo="LOGIN";
+        Paquete paquete=new Paquete(protocolo,parametrosString);
+        String paqueteSerializado=Paquete.serializar(paquete);
+        jugador.enviarPaquete(paqueteSerializado);
+    }
+    
     public static void main(String args[]) {
         Jugador jugador=new Jugador();
         FormularioDeInicio formularioDeInicio=new FormularioDeInicio();

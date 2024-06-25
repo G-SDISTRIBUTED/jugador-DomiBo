@@ -81,6 +81,11 @@ public class FormularioDeInicioDeSesion extends javax.swing.JFrame {
         jTextField2.setToolTipText("Introduzca su contraseña...");
 
         jButton1.setText("Iniciar sesión");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton3.setText("Cancelar");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
@@ -175,8 +180,20 @@ public class FormularioDeInicioDeSesion extends javax.swing.JFrame {
         jLabel2.setText("Registrarse");
     }//GEN-LAST:event_jLabel2MouseExited
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        controlador.iniciarSesionDelJugador();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     public void asignarControlador(Controlador controlador){
         this.controlador=controlador;
+    }
+    
+    public String obtenerDatoDelTextField1(){
+        return jTextField1.getText();
+    }
+    
+    public String obtenerDatoDelTextField2(){
+        return jTextField2.getText();
     }
     
     /**
