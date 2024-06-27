@@ -5,7 +5,12 @@
  */
 package com.mycompany.jugador.domibo;
 
-import com.mycompany.utilities.Paquete;
+import com.mycompany.utilities.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -15,6 +20,8 @@ import org.json.JSONObject;
 public class Jugador implements IObservadorDeClienteSocket {
     ClienteSocket clienteSocket;
     Controlador controlador;
+    Usuario usuario;
+    Sala sala;
     
     public Jugador(){
         clienteSocket=new ClienteSocket(12345,"127.0.0.1");
@@ -31,32 +38,106 @@ public class Jugador implements IObservadorDeClienteSocket {
     
     @Override
     public void paqueteRecibido(String mensaje) {
-        Paquete paquete=Paquete.deserializar(mensaje);
-        String protocolo = paquete.obtenerProtocolo();
-        String parametros=paquete.obtenerParametros();
-        switch (protocolo) {
-            case "LOGIN":
-                JSONObject parametrosDeVerificacionLogin = new JSONObject(parametros);
-                String estadoDeRespuestaLogin = parametrosDeVerificacionLogin.getString("estado");
-                if(estadoDeRespuestaLogin.equals("true")){
-                    controlador.cerrarFormularioDeInicioDeSesion();
-                    controlador.mostrarFormularioPrincipal();
-                }
-                break;
-            case "LOGOUT":
-                //
-                break;
-            case "REGISTRO":
-                JSONObject parametrosDeVerificacionRegistro = new JSONObject(parametros);
-                String estadoDeRespuestaDERegistro = parametrosDeVerificacionRegistro.getString("estado");
-                if(estadoDeRespuestaDERegistro.equals("true")){
-                    controlador.cerrarFormularioDeRegistro();
-                    controlador.mostrarFormularioPrincipal();
-                }
-                break;
-            default:
-                //
-                break;
+        try {
+            Paquete paquete=Paquete.deserializar(mensaje);
+            String protocolo = paquete.obtenerProtocolo();
+            String parametros=paquete.obtenerParametros();
+            System.out.println("Protocolo: "+protocolo+", parametros: "+parametros);
+            switch (protocolo) {
+                case "LOGIN":{
+                    JSONObject parametrosLogin = new JSONObject(parametros);
+                    String estadoDeRespuestaLogin = parametrosLogin.getString("estado");
+                    if(estadoDeRespuestaLogin.equals("true")){
+                        Integer id = parametrosLogin.getInt("id");
+                        String nombre = parametrosLogin.getString("nombre");
+                        String nombreDeUsuario = parametrosLogin.getString("nombreDeUsuario");
+                        String correoElectronico = parametrosLogin.getString("correoElectronico");
+                        String telefono = parametrosLogin.getString("telefono");
+                        String contrasena = parametrosLogin.getString("contrasena");
+                        
+                        this.usuario = new Usuario(id,nombre,nombreDeUsuario,correoElectronico, telefono,contrasena);
+                        
+                        controlador.cerrarFormularioDeInicioDeSesion();
+                        controlador.mostrarFormularioPrincipal();
+                    }
+                    break;
+                }    
+                case "LOGOUT":
+                    //
+                    break;
+                case "REGISTRO":{
+                    JSONObject parametrosRegistro = new JSONObject(parametros);
+                    String estadoDeRespuestaDERegistro = parametrosRegistro.getString("estado");
+                    if(estadoDeRespuestaDERegistro.equals("true")){
+                        Integer id = parametrosRegistro.getInt("id");
+                        String nombre = parametrosRegistro.getString("nombre");
+                        String nombreDeUsuario = parametrosRegistro.getString("nombreDeUsuario");
+                        String correoElectronico = parametrosRegistro.getString("correoElectronico");
+                        String telefono = parametrosRegistro.getString("telefono");
+                        String contrasena = parametrosRegistro.getString("contrasena");
+                        
+                        this.usuario = new Usuario(id,nombre,nombreDeUsuario,correoElectronico, telefono,contrasena);
+                        
+                        controlador.cerrarFormularioDeRegistro();
+                        controlador.mostrarFormularioPrincipal();
+                    }
+                    break;
+                }    
+                case "CREAR":{
+                    JSONObject parametrosSala = new JSONObject(parametros);
+                    String estadoDeRespuesta= parametrosSala.getString("estado");
+                    if(estadoDeRespuesta.equals("true")){
+                        String nombreDeSala = parametrosSala.getString("nombre");
+                        String token = parametrosSala.getString("token");
+                        
+                        this.sala = new Sala(token, nombreDeSala, usuario);
+                        
+                        controlador.cerrarFormularioPrincipal();
+                        controlador.mostrarFormularioDeSala();
+                    }
+                    break;
+                }  
+                case "SALAS":{
+                    JSONObject parametrosSalas = new JSONObject(parametros);
+                    String estadoDeRespuestaDERegistro = parametrosSalas.getString("estado");
+                    if(estadoDeRespuestaDERegistro.equals("true")){
+                        List<Sala> salas=new ArrayList<>();
+                        for(int i=1; i < parametrosSalas.length(); i++){
+                            String parametrosSalaString = parametrosSalas.getString("sala"+i);
+                            JSONObject parametrosSala = new JSONObject(parametrosSalaString);
+                            String tokenSala = parametrosSala.getString("token");
+                            String nombreSala = parametrosSala.getString("nombreSala");
+                            String nombreCreador = parametrosSala.getString("nombreCreador");
+                            
+                            Sala sala = new Sala(tokenSala,nombreSala, new Usuario(nombreCreador));
+                            salas.add(sala);
+                        }
+                        controlador.actualizarSalas(salas);
+                    }
+                    break;
+                } 
+                case "ENTRAR":{
+                    JSONObject parametrosRegistro = new JSONObject(parametros);
+                    String estadoDeRespuesta = parametrosRegistro.getString("estado");
+                    if(estadoDeRespuesta.equals("true")){
+                        String token = parametrosRegistro.getString("token");
+                        String nombreDeSala = parametrosRegistro.getString("nombre");
+                        Integer idCreador = parametrosRegistro.getInt("idCreador");
+                        String nombreCreador = parametrosRegistro.getString("nombreCreador");
+                        
+                        this.sala = new Sala(token, nombreDeSala, new Usuario(idCreador, nombreCreador));
+                        
+                        controlador.cerrarFormularioPrincipal();
+                        controlador.mostrarFormularioDeSala();
+                    }
+                    break;
+                }   
+                default:
+                    //
+                    break;
+            }
+        } catch (JSONException ex) {
+            Logger.getLogger(Jugador.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
