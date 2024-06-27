@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
+import com.google.gson.Gson;
 
 /**
  *
@@ -62,9 +63,16 @@ public class Jugador implements IObservadorDeClienteSocket {
                     }
                     break;
                 }    
-                case "LOGOUT":
-                    //
-                    break;
+                case "MOVER_FICHA":{
+                  System.out.println("Llega hasta mover ficha cliente");
+                  JSONObject parametrosJson = new JSONObject(parametros);
+                  String ficha = parametrosJson.getString("ficha");
+                  String posicion = parametrosJson.getString("posicion");
+                  Gson gson = new Gson();
+                  Ficha fichaAAgregar=gson.fromJson(ficha, Ficha.class);
+                  controlador.agregarFichaADroPanel(fichaAAgregar);
+                  break;
+                }
                 case "REGISTRO":{
                     JSONObject parametrosRegistro = new JSONObject(parametros);
                     String estadoDeRespuestaDERegistro = parametrosRegistro.getString("estado");
@@ -138,6 +146,7 @@ public class Jugador implements IObservadorDeClienteSocket {
             }
         } catch (JSONException ex) {
             Logger.getLogger(Jugador.class.getName()).log(Level.SEVERE, null, ex);
+
         }
     }
     

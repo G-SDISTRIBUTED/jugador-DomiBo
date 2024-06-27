@@ -5,6 +5,7 @@
  */
 package com.mycompany.jugador.domibo;
 
+import com.google.gson.Gson;
 import com.mycompany.utilities.Paquete;
 import com.mycompany.utilities.Sala;
 import java.util.ArrayList;
@@ -25,17 +26,21 @@ public class Controlador {
     private FormularioDeInicioDeSesion formularioDeInicioDeSesion;
     private FormularioPrincipal formularioPrincipal;
     private FormularioDeSala formularioDeSala;
-    
+    FormularioDelTablero formularioDelTablero;
     private Thread getRoomsThread;
     public List<String> tokenSalas=new ArrayList<>();
-    
-    public Controlador(Jugador jugador, FormularioDeInicio formularioDeInicio, FormularioDeRegistro formularioDeRegistro, FormularioDeInicioDeSesion formularioDeInicioDeSesion, FormularioPrincipal formularioPrincipal, FormularioDeSala formularioDeSala){
+
+    public Controlador(Jugador jugador, FormularioDeInicio formularioDeInicio, FormularioDeRegistro formularioDeRegistro, FormularioDeInicioDeSesion formularioDeInicioDeSesion, FormularioPrincipal formularioPrincipal, FormularioDeSala formularioDeSala,FormularioDelTablero formularioDelTablero){
         this.jugador=jugador;
         this.formularioDeInicio=formularioDeInicio;
         this.formularioDeRegistro=formularioDeRegistro;
         this.formularioDeInicioDeSesion=formularioDeInicioDeSesion;
         this.formularioPrincipal=formularioPrincipal;
+
         this.formularioDeSala=formularioDeSala;
+
+        this.formularioDelTablero=formularioDelTablero;
+
     }
     
     public void mostrarFormularioDeInicio(){
@@ -171,8 +176,11 @@ public class Controlador {
         FormularioDeRegistro formularioDeRegistro=new FormularioDeRegistro();
         FormularioDeInicioDeSesion formularioDeInicioDeSesion=new FormularioDeInicioDeSesion();
         FormularioPrincipal formularioPrincipal=new FormularioPrincipal();
+
         FormularioDeSala formularioDeSala = new FormularioDeSala();
-        Controlador controlador=new Controlador(jugador, formularioDeInicio, formularioDeRegistro, formularioDeInicioDeSesion,formularioPrincipal,formularioDeSala);
+
+        FormularioDelTablero formularioDelTablero=new FormularioDelTablero();
+        Controlador controlador=new Controlador(jugador, formularioDeInicio, formularioDeRegistro, formularioDeInicioDeSesion,formularioPrincipal,formularioDeSala,formularioDelTablero);
         jugador.asignarControlador(controlador);
         formularioDeInicio.asignarControlador(controlador);
         formularioDeRegistro.asignarControlador(controlador);
@@ -180,6 +188,48 @@ public class Controlador {
         formularioPrincipal.asignarControlador(controlador);
         formularioDeSala.asignarControlador(controlador);
         formularioDeInicio.setVisible(true);
+
+        formularioDelTablero.asignarControlador(controlador);
+        //formularioDelTablero.setVisible(true);
+
         
+    }
+
+    public Boolean verificarJugada(JFicha ficha, String sentido) {
+        
+        JFicha fichaObservada=formularioDelTablero.obetenerFicha(sentido);
+        System.out.println("Ficha en tablero: "+fichaObservada.toString());
+        if (sentido=="izquierda"){
+            int derecha=ficha.getPuntosDerecha();
+            System.out.println("Ficha a poner a la izq: "+derecha);
+            int izquierda=fichaObservada.getPuntosIzquierda();
+            System.out.println("Ficha a la izq: "+izquierda);
+            return derecha==izquierda;
+        }else{
+            int izquierda=ficha.getPuntosIzquierda();
+            System.out.println("Ficha a poner a la derecha: "+izquierda);
+            int derecha=fichaObservada.getPuntosDerecha();
+            System.out.println("Ficha a la derecha: "+derecha);
+            return derecha==izquierda;
+        }
+    }
+
+    public void enviarJugada(JFicha ficha, String sentido) {
+        Ficha fichaAEnviar=new Ficha(ficha.getPuntosIzquierda(), ficha.getPuntosDerecha());
+        Gson gson = new Gson();
+        String fichaSerializada=gson.toJson(fichaAEnviar);
+        JSONObject movimientoJson = new JSONObject();
+        movimientoJson.put("ficha", fichaSerializada);
+        movimientoJson.put("posicion", sentido);
+        String parametrosString=movimientoJson.toString();
+        String protocolo = "MOVER_FICHA";
+        Paquete paquete=new Paquete(protocolo,parametrosString);
+        String paqueteSerializado = Paquete.serializar(paquete);
+        jugador.enviarPaquete(paqueteSerializado);
+    }
+
+    public void agregarFichaADroPanel(Ficha fichaAAgregar) {
+        JFicha ficha=new JFicha(fichaAAgregar.getPuntosIzquierda(), fichaAAgregar.getPuntosDerecha());
+        formularioDelTablero.addFicha(ficha);
     }
 }
