@@ -25,7 +25,7 @@ public class Jugador implements IObservadorDeClienteSocket {
     Sala sala;
     
     public Jugador(){
-        clienteSocket=new ClienteSocket(12345,"127.0.0.1");
+        clienteSocket=new ClienteSocket(12345,"192.168.231.17");
         clienteSocket.asignarObservador(this);
     }
     
@@ -140,6 +140,16 @@ public class Jugador implements IObservadorDeClienteSocket {
                     }
                     break;
                 }   
+                case "INICIAR":{
+                    JSONObject parametrosRegistro = new JSONObject(parametros);
+                    String estadoDeRespuesta = parametrosRegistro.getString("estado");
+                    if(estadoDeRespuesta.equals("true")){
+                        
+                        controlador.cerrarFormularioDeSala();
+                        controlador.mostrarFormularioDelTablero();
+                    }
+                    break;
+                } 
                 default:
                     //
                     break;

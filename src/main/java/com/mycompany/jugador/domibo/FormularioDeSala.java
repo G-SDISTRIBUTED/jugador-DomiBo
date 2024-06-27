@@ -136,6 +136,8 @@ public class FormularioDeSala extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jBIniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBIniciarActionPerformed
+
+        controlador.iniciarPartida();
         controlador.mostrarFormularioDelTablero();
         dispose();
     }//GEN-LAST:event_jBIniciarActionPerformed

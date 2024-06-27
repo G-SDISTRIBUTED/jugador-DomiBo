@@ -235,6 +235,20 @@ public class Controlador {
         String paqueteSerializado = Paquete.serializar(paquete);
         jugador.enviarPaquete(paqueteSerializado);
     }
+    
+    public void iniciarPartida(){
+        try {
+            JSONObject parametrosJson = new JSONObject();
+            parametrosJson.put("tokenSala",jugador.sala.getToken());
+            String parametrosString=parametrosJson.toString();
+            String protocolo="INICIAR";
+            Paquete paquete=new Paquete(protocolo,parametrosString);
+            String paqueteSerializado=Paquete.serializar(paquete);
+            jugador.enviarPaquete(paqueteSerializado);
+        } catch (JSONException ex) {
+            Logger.getLogger(Controlador.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
     public void agregarFichaADroPanel(Ficha fichaAAgregar) {
         JFicha ficha=new JFicha(fichaAAgregar.getPuntosIzquierda(), fichaAAgregar.getPuntosDerecha());
