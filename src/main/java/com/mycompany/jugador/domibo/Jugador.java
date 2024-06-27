@@ -7,6 +7,7 @@ package com.mycompany.jugador.domibo;
 
 import com.mycompany.utilities.Paquete;
 import org.json.JSONObject;
+import com.google.gson.Gson;
 
 /**
  *
@@ -43,8 +44,14 @@ public class Jugador implements IObservadorDeClienteSocket {
                     controlador.mostrarFormularioPrincipal();
                 }
                 break;
-            case "LOGOUT":
-                //
+            case "MOVER_FICHA":
+                System.out.println("Llega hasta mover ficha cliente");
+                JSONObject parametrosJson = new JSONObject(parametros);
+                String ficha = parametrosJson.getString("ficha");
+                String posicion = parametrosJson.getString("posicion");
+                Gson gson = new Gson();
+                Ficha fichaAAgregar=gson.fromJson(ficha, Ficha.class);
+                controlador.agregarFichaADroPanel(fichaAAgregar);
                 break;
             case "REGISTRO":
                 JSONObject parametrosDeVerificacionRegistro = new JSONObject(parametros);
