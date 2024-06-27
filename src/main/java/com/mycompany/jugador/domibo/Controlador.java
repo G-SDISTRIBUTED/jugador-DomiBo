@@ -68,6 +68,10 @@ public class Controlador {
         formularioDeSala.setVisible(true);
     }
     
+    public void mostrarFormularioDelTablero(){
+        formularioDelTablero.setVisible(true);
+    }
+    
     public void cerrarFormularioDeInicio(){
         formularioDeInicio.dispose();
     }
@@ -83,6 +87,10 @@ public class Controlador {
     public void cerrarFormularioPrincipal(){
         getRoomsThread.interrupt();
         formularioPrincipal.dispose();
+    }
+    
+    public void cerrarFormularioDeSala(){
+        formularioDeSala.dispose();
     }
     
     public void registrarJugador(){
